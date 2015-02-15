@@ -8,11 +8,6 @@ import tempfile
 import shutil
 
 DIRS = ["drawable-mdpi", "drawable-hdpi", "drawable-xhdpi", "drawable-xxhdpi"]
-SUFFIXES = ["light", "dark"]
-# see http://www.google.com/design/spec/style/icons.html#icons-system-icons
-# bottom-most section
-COLORS = ["#000000", "#ffffff"]
-OPACITIES = [0.54, 1.0]
 
 
 def create_images(svg, namebase):
@@ -23,31 +18,29 @@ def create_images(svg, namebase):
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir, exist_ok=True)
 
-        for t in range(len(SUFFIXES)):
-            suffix = SUFFIXES[t]
-            output = os.path.join(output_dir, namebase + "_" + suffix + ".png")
-            print (svg + ' -> ' + output)
+        output = os.path.join(output_dir, namebase + suffix + ".png")
+        print (svg + ' -> ' + output)
 
-            tmp_svg = tempfile.mkstemp(".svg")[1]
+        tmp_svg = tempfile.mkstemp(".svg")[1]
 
-            f = open(svg, 'r')
-            data = f.read()
-            f.close()
+        f = open(svg, 'r')
+        data = f.read()
+        f.close()
 
-            data = data.replace(
-                "fill=\"#000000\"",
-                "fill=\"" + COLORS[t] + "\"")
-            data = data.replace(
-                "fill-opacity=\"1.0\"",
-                "fill-opacity=\"" + str(OPACITIES[t]) + "\"")
+        data = data.replace(
+            "fill=\"#000000\"",
+            "fill=\"" + color + "\"")
+        data = data.replace(
+            "fill-opacity=\"1.0\"",
+            "fill-opacity=\"" + str(opacity) + "\"")
 
-            f = open(tmp_svg, 'w')
-            f.write(data)
-            f.close()
+        f = open(tmp_svg, 'w')
+        f.write(data)
+        f.close()
 
-            create_png(tmp_svg, output, size)
+        create_png(tmp_svg, output, size)
 
-            os.remove(tmp_svg)
+        os.remove(tmp_svg)
 
 
 def create_png(svg, output, size):
@@ -67,15 +60,21 @@ def create_png(svg, output, size):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 4:
+    nargs = len(sys.argv)
+    if nargs != 6 and nargs != 7:
         print ("usage: " + sys.argv[0] +
-               " <filename (input)> <size> <res directory (output)>")
-        print (len(sys.argv))
+               " <filename (input)> <res directory (output)> <size> <color> <opacity> [<suffix>]")
         exit(1)
 
     svg_path = sys.argv[1]
-    isize = int(sys.argv[2])
-    dir_pngs = sys.argv[3]
+    dir_pngs = sys.argv[2]
+    isize = int(sys.argv[3])
+    color = sys.argv[4]
+    opacity = float(sys.argv[5])
+    
+    suffix = "";
+    if nargs == 7:
+        suffix = sys.argv[6]
 
     # dimensions for mdpi/hdpi/xhdpi/xxhdpi
     sizes = [isize, isize * 1.5, isize * 2, isize * 3]
