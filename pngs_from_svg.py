@@ -45,7 +45,6 @@ def create_images(svg, namebase):
 
 
 def create_png(svg, output, size):
-    running_on_posix = is_posix()
     cmd = "inkscape -C -e " + output + " -h " + str(size) + " " + svg
     args = shlex.split(cmd, False, running_on_posix)
     subprocess.call(args)
@@ -70,6 +69,8 @@ def is_posix():
         return False
 
 if __name__ == "__main__":
+
+    running_on_posix = is_posix()
 
     nargs = len(sys.argv)
     if nargs != 6 and nargs != 7:
