@@ -21,7 +21,8 @@ def create_images(svg, namebase):
         output = os.path.join(output_dir, namebase + suffix + ".png")
         print (svg + ' -> ' + output)
 
-        tmp_svg = tempfile.mkstemp(".svg")[1]
+        tmp_svg = tempfile.mkstemp(".svg")
+        os.close(tmp_svg[0])
 
         f = open(svg, 'r')
         data = f.read()
@@ -34,29 +35,39 @@ def create_images(svg, namebase):
             "fill-opacity=\"1.0\"",
             "fill-opacity=\"" + str(opacity) + "\"")
 
-        f = open(tmp_svg, 'w')
+        f = open(tmp_svg[1], 'w')
         f.write(data)
         f.close()
 
-        create_png(tmp_svg, output, size)
+        create_png(tmp_svg[1], output, size)
 
-        os.remove(tmp_svg)
+        os.remove(tmp_svg[1])
 
 
 def create_png(svg, output, size):
+    running_on_posix = is_posix()
     cmd = "inkscape -C -e " + output + " -h " + str(size) + " " + svg
-    args = shlex.split(cmd)
+    args = shlex.split(cmd, False, running_on_posix)
     subprocess.call(args)
 
-    tmp_png = tempfile.mkstemp(".png")[1]
-    shutil.copyfile(output, tmp_png)
+    tmp_png = tempfile.mkstemp(".png")
+    os.close(tmp_png[0])
+    shutil.copyfile(output, tmp_png[1])
+    os.remove(output)
 
-    cmd = "pngcrush " + tmp_png + " " + output
-    args = shlex.split(cmd)
+    cmd = "pngcrush " + tmp_png[1] + " " + output
+    args = shlex.split(cmd, False, running_on_posix)
     print (args)
     subprocess.call(args)
 
-    os.remove(tmp_png)
+    os.remove(tmp_png[1])
+    
+def is_posix():
+    try:
+        import posix
+        return True
+    except ImportError:
+        return False
 
 if __name__ == "__main__":
 
