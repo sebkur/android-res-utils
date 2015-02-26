@@ -31,6 +31,9 @@ def create_images(svg, namebase):
         data = data.replace( \
             "style=\"fill:#000000;opacity:1\"",
             "style=\"fill:" + color + ";opacity:" + str(opacity) + "\"")
+        data = data.replace( \
+            "style=\"opacity:1;fill:#000000\"",
+            "style=\"opacity:" + str(opacity) + ";fill:" + color + "\"")
         data = data.replace(
             "fill=\"#000000\"",
             "fill=\"" + color + "\"")
