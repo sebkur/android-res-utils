@@ -10,7 +10,9 @@ import shutil
 DIRS = ["drawable-mdpi", "drawable-hdpi", "drawable-xhdpi", "drawable-xxhdpi"]
 
 
-def create_images(svg, namebase):
+def create_images(svg, dir_pngs, namebase, suffix, isize, color, opacity):
+    # dimensions for mdpi/hdpi/xhdpi/xxhdpi
+    sizes = [isize, isize * 1.5, isize * 2, isize * 3]
     for s in range(len(sizes)):
         size = sizes[s]
         output_dir = os.path.join(dir_pngs, DIRS[s])
@@ -28,7 +30,7 @@ def create_images(svg, namebase):
         data = f.read()
         f.close()
 
-        data = data.replace( \
+        data = data.replace(
             "style=\"fill:#000000;opacity:1\"",
             "style=\"fill:" + color + ";opacity:" + str(opacity) + "\"")
         data = data.replace( \
@@ -69,7 +71,8 @@ def create_png(svg, output, size):
     subprocess.call(args)
 
     os.remove(tmp_png[1])
-    
+
+
 def is_posix():
     try:
         import posix
@@ -77,9 +80,10 @@ def is_posix():
     except ImportError:
         return False
 
-if __name__ == "__main__":
 
-    running_on_posix = is_posix()
+running_on_posix = is_posix()
+
+if __name__ == "__main__":
 
     nargs = len(sys.argv)
     if nargs != 6 and nargs != 7:
@@ -92,17 +96,14 @@ if __name__ == "__main__":
     isize = int(sys.argv[3])
     color = sys.argv[4]
     opacity = float(sys.argv[5])
-    
-    suffix = "";
+
+    suffix = ""
     if nargs == 7:
         suffix = sys.argv[6]
-
-    # dimensions for mdpi/hdpi/xhdpi/xxhdpi
-    sizes = [isize, isize * 1.5, isize * 2, isize * 3]
 
     svg_name = os.path.basename(svg_path)
     name = svg_name
     if svg_name.lower().endswith(".svg"):
         name = svg_name[:-4]
 
-    create_images(svg_path, name)
+    create_images(svg_path, dir_pngs, name, suffix, isize, color, opacity)
