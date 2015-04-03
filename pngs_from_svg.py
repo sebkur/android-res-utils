@@ -12,6 +12,24 @@ import xml.etree.ElementTree as ElementTree
 
 DIRS = ["drawable-mdpi", "drawable-hdpi", "drawable-xhdpi", "drawable-xxhdpi"]
 
+def remove_opacity(path):
+    style = path.get('style')
+
+    if style is not None:
+        style = re.sub("opacity:\s*\d?\.?\d*;?", "", style)
+        path.set("style", style)
+
+    if path.get('fill-opacity') is not None:
+        del path.attrib['fill-opacity']
+
+
+def remove_color(path):
+    style = path.get('style')
+
+    if style is not None:
+        style = re.sub("fill:\s*#\d{3,6};?", "", style)
+        path.set("style", style)
+
 
 def modify_svg(svg, tmp, color, opacity):
     ns = "http://www.w3.org/2000/svg"
@@ -19,26 +37,18 @@ def modify_svg(svg, tmp, color, opacity):
 
     tree = ElementTree.parse(svg)
 
+    if opacity:
+        for path in tree.iter("{" + ns + "}g"):
+            remove_opacity(path)
+
     for path in tree.iter("{" + ns + "}path"):
-        fill = path.get('fill')
-        if fill != "none":
-            style = path.get('style')
-
+        if path.get('fill') != "none":
             if color:
-                if style is not None:
-                    style = re.sub("fill:\s*#\d{3,6};?", "", style)
-                    path.set("style", style)
-
+                remove_color(path)
                 path.set("fill", color)
 
             if opacity:
-                if style is not None:
-                    style = re.sub("opacity:\s*\d?\.?\d*;?", "", style)
-                    path.set("style", style)
-
-                if path.get('fill-opacity') is not None:
-                    del path.attrib['fill-opacity']
-
+                remove_opacity(path)
                 path.set("opacity", str(opacity))
 
     tree.write(tmp)
