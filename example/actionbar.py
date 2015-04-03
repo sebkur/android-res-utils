@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import pngs_from_svg_xml as pfsx
+import pngs_from_svg as pfsx
 
 
 class Icon:
