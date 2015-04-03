@@ -18,9 +18,8 @@ def modify_svg(svg, tmp, color, opacity):
     ElementTree.register_namespace("", ns)
 
     tree = ElementTree.parse(svg)
-    root = tree.getroot()
 
-    for path in root.findall("{" + ns + "}path"):
+    for path in tree.iter("{" + ns + "}path"):
         fill = path.get('fill')
         if fill != "none":
             style = path.get('style')
