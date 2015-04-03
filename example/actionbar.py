@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import pngs_from_svg as pfsx
+import pngs_from_svg as pfs
 
 
 class Icon:
@@ -16,9 +16,10 @@ class Config:
         self.suffix = suffix
 
 ICONS = [
-    Icon("material/ic_info_48px", "info"),
-    Icon("material/ic_settings_48px", "settings"),
-    Icon("material/ic_battery_50_48px", "battery"),
+    Icon("svg/material/ic_info_48px", "info"),
+    Icon("svg/material/ic_settings_48px", "settings"),
+    Icon("svg/material/ic_battery_50_48px", "battery"),
+    Icon("svg/ic_app_protection", "app_protection"),
     ]
 
 CONFIGS = [
@@ -33,5 +34,5 @@ for icon in ICONS:
     svg = icon.source + ".svg"
     dest = icon.dest
     for config in CONFIGS:
-        pfsx.create_images(svg, res, dest, config.suffix, isize,
+        pfs.create_images(svg, res, dest, config.suffix, isize,
                            config.color, config.opacity)
