@@ -37,6 +37,9 @@ def modify_svg(svg, tmp, color, opacity):
                     style = re.sub("opacity:\s*\d?\.?\d*;?", "", style)
                     path.set("style", style)
 
+                if path.get('fill-opacity') is not None:
+                    del path.attrib['fill-opacity']
+
                 path.set("opacity", str(opacity))
 
     tree.write(tmp)
