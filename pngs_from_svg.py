@@ -12,17 +12,6 @@ import xml.etree.ElementTree as ElementTree
 
 DIRS = ["drawable-mdpi", "drawable-hdpi", "drawable-xhdpi", "drawable-xxhdpi"]
 
-def remove_opacity(path):
-    style = path.get('style')
-
-    if style is not None:
-        style = re.sub("opacity:\s*\d?\.?\d*;?", "", style)
-        path.set("style", style)
-
-    if path.get('fill-opacity') is not None:
-        del path.attrib['fill-opacity']
-
-
 def remove_color(path):
     style = path.get('style')
 
@@ -36,20 +25,28 @@ def modify_svg(svg, tmp, color, opacity):
     ElementTree.register_namespace("", ns)
 
     tree = ElementTree.parse(svg)
+    root = tree.getroot()
 
-    if opacity:
-        for path in tree.iter("{" + ns + "}g"):
-            remove_opacity(path)
-
-    for path in tree.iter("{" + ns + "}path"):
-        if path.get('fill') != "none":
-            if color:
+    if color:
+        for path in tree.iter("{" + ns + "}path"):
+            if path.get('fill') != "none":
                 remove_color(path)
                 path.set("fill", color)
 
-            if opacity:
-                remove_opacity(path)
-                path.set("opacity", str(opacity))
+    if opacity:
+        opacityGroup = ElementTree.Element("g")
+        opacityGroup.set("id", "png_from_svg")
+        opacityGroup.set("opacity", str(opacity))
+        root.append(opacityGroup)
+
+        ignoredElementTags = ['{http://www.w3.org/2000/svg}metadata',
+                              '{http://www.w3.org/2000/svg}defs',
+                              '{http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd}namedview']
+
+        for path in root.findall('*'):
+            if (path != opacityGroup) and (path.tag not in ignoredElementTags):
+                opacityGroup.append(path)
+                root.remove(path)
 
     tree.write(tmp)
 
