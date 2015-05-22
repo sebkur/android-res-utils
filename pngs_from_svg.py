@@ -28,10 +28,13 @@ def modify_svg(svg, tmp, color, opacity):
     root = tree.getroot()
 
     if color:
-        for path in tree.iter("{" + ns + "}path"):
-            if path.get('fill') != "none":
-                remove_color(path)
-                path.set("fill", color)
+        coloredShapes = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "text",
+                         "tspan", "tref", "textPath", "altGlyph", "altGlyphDef", "altGlyphItem", "glyphRef"]
+        for shape in coloredShapes:
+            for path in tree.iter("{" + ns + "}" + shape):
+                if path.get('fill') != "none":
+                    remove_color(path)
+                    path.set("fill", color)
 
     if opacity:
         opacityGroup = ElementTree.Element("g")
