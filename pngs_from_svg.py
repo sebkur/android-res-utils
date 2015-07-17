@@ -10,7 +10,7 @@ import re
 
 import xml.etree.ElementTree as ElementTree
 
-DIRS = ["drawable-mdpi", "drawable-hdpi", "drawable-xhdpi", "drawable-xxhdpi"]
+DIRS = ["drawable-mdpi", "drawable-hdpi", "drawable-xhdpi", "drawable-xxhdpi", "drawable-xxxhdpi"]
 
 def remove_color(path):
     style = path.get('style')
@@ -56,7 +56,7 @@ def modify_svg(svg, tmp, color, opacity):
 
 def create_images(svg, dir_pngs, namebase, suffix, isize, color, opacity, nopngcrush=False):
     # dimensions for mdpi/hdpi/xhdpi/xxhdpi
-    sizes = [isize, isize * 1.5, isize * 2, isize * 3]
+    sizes = [isize, isize * 1.5, isize * 2, isize * 3, isize * 4]
 
     tmp_svg = tempfile.mkstemp(".svg")
     os.close(tmp_svg[0])
