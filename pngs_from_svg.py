@@ -89,7 +89,7 @@ def create_png(svg, output, size, nopngcrush):
         shutil.copyfile(output, tmp_png[1])
         os.remove(output)
 
-        cmd = "pngcrush " + tmp_png[1] + " " + output
+        cmd = "pngcrush -q " + tmp_png[1] + " " + output
         args = shlex.split(cmd, False, running_on_posix)
         subprocess.call(args)
 
